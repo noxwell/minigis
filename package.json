@@ -1,0 +1,25 @@
+{
+  "name": "minigis",
+  "version": "0.0.1",
+  "description": "Implementation of GIS",
+  "private": true,
+  "author": "Alexey Vetrov <vetaleha@gmail.com>",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "babelify": "^6.3.0",
+    "browserify": "^11.2.0",
+    "gulp": "^3.9.0",
+    "gulp-babel": "^5.2.1",
+    "gulp-bower": "0.0.10",
+    "gulp-connect": "^2.2.0",
+    "gulp-debug": "^2.1.0",
+    "gulp-less": "^3.0.3",
+    "gulp-newer": "^0.5.1",
+    "gulp-plumber": "^1.0.1",
+    "gulp-uglify": "^1.4.1",
+    "gulp-util": "^3.0.7",
+    "merge-stream": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}
