@@ -119,10 +119,10 @@ export default class CoordSys {
   
   moveMap(delta)
   {
-    delta.y = -delta.y;
-    delta = Point.mul(delta, this.getScale());
-    this.displayRect[0] = Point.sub(this.displayRect[0], delta);
-    this.displayRect[1] = Point.sub(this.displayRect[1], delta);
+    var map_delta = new Point(delta.x, -delta.y);
+    map_delta = Point.mul(map_delta, this.getScale());
+    this.displayRect[0] = Point.sub(this.displayRect[0], map_delta);
+    this.displayRect[1] = Point.sub(this.displayRect[1], map_delta);
   }
   
   mapToCanvas(point)
@@ -136,10 +136,9 @@ export default class CoordSys {
   
   canvasToMap(point)
   {
-    point.y = this.canvas.height - point.y;
-    var scale = (this.displayRect[1].x - this.displayRect[0].x) / this.canvas.width;
-    var v1 = Point.mul(point, scale);
-    return Point.add(this.displayRect[0], v1);
+    var map_point = new Point(point.x, this.canvas.height - point.y);
+    map_point = Point.mul(map_point, this.getScale());
+    return Point.add(map_point, this.displayRect[0]);
   }
   
   clientToCanvas(point)

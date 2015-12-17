@@ -78,7 +78,8 @@ gulp.task('styles', function() {
 gulp.task('run-server', function() {
   connect.server({
     root: target_base,
-    livereload: true
+    livereload: true,
+    port:80
   });
 });
 

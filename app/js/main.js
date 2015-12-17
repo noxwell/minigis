@@ -29,59 +29,92 @@ var loadMapList = function(list) {
 };
 
 var mapList = [
-  '/assets/maps/222.mif',
-  '/assets/maps/test.mif',
-  '/assets/maps/Enskaya_oblast.mif'
+  //'/assets/maps/222.mif',
+  //'/assets/maps/Enskaya_oblast.mif',
+  '/assets/maps/test.mif'
 ];
 
 loadMapList(mapList)
-  .then(function(data) {
-    console.log(data);
-  });
+  .then(function(raw_data) {
+    var canvas = new MapCanvas($('#map_canvas')[0]);
+    var map = [];
+    var redrawAll = function()
+    {
+      canvas.clear();
+      for(var i = map.length - 1; i >= 0; i--)
+        map[i].drawAll();
+    }
 
-$.get('/assets/maps/222.mif', function(raw_data) {
-  var canvas = new MapCanvas($('#map_canvas')[0]);
-  var map = new MapObject(raw_data, canvas);
-  map.drawAll();
-  $('#zoom_in').on('click', function(){
-    canvas.clear();
-    map.zoomIn();
-  });
-  $('#zoom_out').on('click', function(){
-    canvas.clear();
-    map.zoomOut();
-  });
-  $('#map_canvas').on('mousewheel', function(event){
-    canvas.clear();
-    if(event.originalEvent.wheelDelta > 0)
-      map.zoomIn(Math.abs(1 + event.originalEvent.wheelDelta / 1000));
-    else
-      map.zoomOut(Math.abs(1 - event.originalEvent.wheelDelta / 1000));
-    event.stopPropagation();
-  });
-  $('#map_canvas').on('mousedown', function(event){
-    map.lastPos = new Point(event.pageX, event.pageY);
-    map.moveLength = 0;
-    map.mousedown = true;
-  });
-  $('#map_canvas').on('mouseup', function(){
-    map.mousedown = false;
-    var curPos = new Point(event.pageX, event.pageY);
-    if(map.moveLength < 3)
+    for(var i = raw_data.length - 1; i >= 0; i--)
     {
-      canvas.clear();
-      map.clickObject(new Point(event.pageX, event.pageY));
+      map[i] = new MapObject(raw_data[i], canvas);
+      map[i].drawAll();
     }
-  });
-  $('#map_canvas').on('mousemove', function(event){
-    if(map.mousedown)
-    {
+    $('#zoom_in').on('click', function(){
       canvas.clear();
+      for(var i = map.length - 1; i >= 0; i--)
+        map[i].zoomIn();
+    });
+    $('#zoom_out').on('click', function(){
+      canvas.clear();
+      for(var i = map.length - 1; i >= 0; i--)
+        map[i].zoomOut();
+    });
+    $('#map_canvas').on('mousewheel', function(event){
+      canvas.clear();
+      if(event.originalEvent.wheelDelta > 0)
+        for(var i = map.length - 1; i >= 0; i--)
+          map[i].zoomIn(Math.abs(1 + event.originalEvent.wheelDelta / 1000));
+      else
+        for(var i = map.length - 1; i >= 0; i--)
+          map[i].zoomOut(Math.abs(1 - event.originalEvent.wheelDelta / 1000));
+      event.stopPropagation();
+    });
+    $('#map_canvas').on('mousedown', function(event){
+      canvas.mousedown = true;
+      canvas.moveLength = 0;
+      canvas.lastPos = new Point(event.pageX, event.pageY);
+    });
+    $('#map_canvas').on('mouseup', function(){
       var curPos = new Point(event.pageX, event.pageY);
-      var delta = Point.sub(curPos, map.lastPos);
-      map.moveLength += delta.length;
-      map.move(delta);
-      map.lastPos = curPos;
-    }
+      canvas.mousedown = false;
+      if(canvas.moveLength < 3)
+      {
+        var clicked = -1;
+        for(var i = 0; i < map.length; i++)
+        {
+          if(map[i].clickObject(curPos) != -1)
+          {
+            clicked = i;
+            break;
+          }
+        }
+        canvas.clear();
+        for(var i = map.length - 1; i >= 0; i--)
+        {
+          if(i != clicked)
+            map[i].removeHighlight();
+          map[i].drawAll();
+        }       
+      }
+    });
+    $('#map_canvas').on('mousemove', function(event){
+      var curPos = new Point(event.pageX, event.pageY);
+      if(canvas.mousedown)
+      {
+        canvas.clear();
+        var delta = Point.sub(curPos, canvas.lastPos);
+        canvas.moveLength += delta.length;
+        for(var i = map.length - 1; i >= 0; i--)
+          map[i].move(delta);
+        canvas.lastPos = curPos;
+      }
+    });
+    $('#find_intersections').on('click', function(){
+      for(var i = 0; i < map.length; i++)
+      {
+        map[i].findIntersections();
+      }
+      redrawAll();
+    });
   });
-});

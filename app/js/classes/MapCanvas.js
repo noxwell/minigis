@@ -20,10 +20,23 @@ export default class MapCanvas {
     this.context.clearRect(0, 0, this.width, this.height);
   }
   
+  drawPoint(point, coordsys)
+  {
+    var map_point = coordsys.mapToCanvas(point);
+    this.context.strokeStyle = '#000000';
+    this.context.font = "10px Arial";
+    this.context.fillText('#', map_point.x - 10, map_point.y - 10, map_point.x + 10, map_point.y + 10);
+  }
+  
   drawLine(line, coordsys)
   {
     var start = coordsys.mapToCanvas(new Point(line.x1, line.y1));
     var end = coordsys.mapToCanvas(new Point(line.x2, line.y2));
+    if(line.highlight != false)
+      this.context.strokeStyle = "#FF0000";
+    else
+      this.context.strokeStyle = line.pen.color;
+    this.context.lineWidth = line.pen.width;
     this.context.beginPath();
     this.context.moveTo(start.x, start.y);
     this.context.lineTo(end.x, end.y);
@@ -32,12 +45,15 @@ export default class MapCanvas {
   
   drawPline(pline, coordsys)
   {
+    if(pline.highlight)
+      this.context.strokeStyle = "#FF0000";
+    else
+      this.context.strokeStyle = pline.pen.color;
+    this.context.lineWidth = pline.pen.width;
+    
     for(var i = 0; i < pline.sections.length; i++)
     {
       this.context.beginPath();
-      this.context.strokeStyle = pline.pen.color;
-      this.context.lineWidth = pline.pen.width;
-      
       var start = coordsys.mapToCanvas(new Point(pline.sections[i][0].x, pline.sections[i][0].y));
       this.context.moveTo(start.x, start.y);
       for(var j = 1; j < pline.sections[i].length; j++)
@@ -89,6 +105,7 @@ export default class MapCanvas {
     switch(object.type)
     {
       case 'point':
+        this.drawPoint(object, coordsys);
         break;
       case 'line':
         this.drawLine(object, coordsys);
