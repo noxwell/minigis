@@ -24,8 +24,12 @@ export default class MapCanvas {
   {
     var map_point = coordsys.mapToCanvas(point);
     this.context.strokeStyle = '#000000';
-    this.context.font = "10px Arial";
-    this.context.fillText('#', map_point.x - 10, map_point.y - 10, map_point.x + 10, map_point.y + 10);
+    if(point.highlight != false)
+      this.context.fillStyle = '#FF0000';
+    else
+      this.context.fillStyle = '#000000';
+    this.context.font = "12px Arial";
+    this.context.fillText('#', map_point.x - 3, map_point.y + 3, map_point.x, map_point.y + 3);
   }
   
   drawLine(line, coordsys)

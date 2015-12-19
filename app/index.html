@@ -15,7 +15,23 @@
           <button id="zoom_out">-</button>
           <button id="find_intersections">Найти пересечения</button>
       </div>
-      <canvas id="map_canvas" width="800" height="400"/>
+      
+      <canvas id="map_canvas" width="800" height="400"></canvas>
+      <div id="layer_control">
+        <input type="file" id="load_layer" multiple/>
+        <br />
+        <select id="enabled_layers" multiple>
+        </select>
+        <div id="layer_switcher">
+          <button id="move_off">=></button>
+          <button id="move_on"><=</button>
+        </div>
+        <select id="disabled_layers" multiple>
+        </select>
+        <br />
+        <button id="move_up">Вверх</button>
+        <button id="move_down">Вниз</button>
+      </div>
     </div>
     <script type="text/javascript" src="/assets/js/main.js" />
   </body>

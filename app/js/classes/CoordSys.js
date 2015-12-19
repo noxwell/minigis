@@ -4,16 +4,20 @@ export default class CoordSys {
   constructor(canvas, coordsys, data)
   {
     this.coordsys = coordsys;
+    this.canvas = canvas;
     if(!this.coordsys.hasOwnProperty('bounds'))
       this.coordsys.bounds = this.getBounds(data);
-    this.map_width = this.coordsys.bounds.maxx - this.coordsys.bounds.minx;
-    this.map_height = this.coordsys.bounds.maxy - this.coordsys.bounds.miny;
-    this.canvas = canvas;
-    this.max_scale = Math.max(this.map_width / this.canvas.width, 
-                            this.map_height / this.canvas.height);
-    this.setDisplayRect(1, 
-      new Point((this.coordsys.bounds.maxx + this.coordsys.bounds.minx) / 2, 
-                 (this.coordsys.bounds.maxy + this.coordsys.bounds.miny) / 2));
+    this.refreshRect();
+  }
+  
+  static mergeBounds(a, b)
+  {
+    return {
+      minx: Math.min(a.minx, b.minx),
+      miny: Math.min(a.miny, b.miny),
+      maxx: Math.max(a.maxx, b.maxx),
+      maxy: Math.max(a.maxy, b.maxy)        
+    };
   }
   
   getBounds(data)
@@ -90,6 +94,17 @@ export default class CoordSys {
       }
     }
     return bounds;
+  }
+  
+  refreshRect()
+  {
+    this.map_width = this.coordsys.bounds.maxx - this.coordsys.bounds.minx;
+    this.map_height = this.coordsys.bounds.maxy - this.coordsys.bounds.miny;
+    this.max_scale = Math.max(this.map_width / this.canvas.width, 
+                            this.map_height / this.canvas.height);
+    this.setDisplayRect(1, 
+      new Point((this.coordsys.bounds.maxx + this.coordsys.bounds.minx) / 2, 
+                 (this.coordsys.bounds.maxy + this.coordsys.bounds.miny) / 2));
   }
   
   getCenter()

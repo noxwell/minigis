@@ -7,9 +7,10 @@ import Line from './Line.js'
 
 export default class MapObject
 {
-  constructor(raw_data, canvas)
+  constructor(filename, raw_data, canvas)
   {
     var map_data = MIFParser.parseToJSON(raw_data);
+    this.filename = filename;
     this.header = map_data.header;
     this.data = map_data.data;
     this.canvas = canvas;
@@ -57,7 +58,7 @@ export default class MapObject
       switch(this.data[i].type) {
         case 'point':
           var dist = Point.dist(this.data[i], map_point);
-          if(dist < max_dist)
+          if(dist < max_dist * 2)
           {
             logger.log('Clicked point: ', i);
             obj = i;
@@ -76,7 +77,7 @@ export default class MapObject
         case 'pline':
           for(var j = 0; j < this.data[i].sections.length && obj == -1; j++)
           {
-            for(var k = 0; k < this.data[i].sections[j].length && obj == -1; k++)
+            for(var k = 0; k < this.data[i].sections[j].length - 1 && obj == -1; k++)
             {
               var nk = (k + 1) % this.data[i].sections[j].length;
               var dist = Line.dist(new Line(this.data[i].sections[j][k], this.data[i].sections[j][nk], true), map_point);
